@@ -1,0 +1,219 @@
+{
+  "trackTitle": "Client Delivery",
+  "trackDescription": "Focuses on Slalom’s business by delivering capabilities and offerings to customers, and supports business growth through excellent delivery. Leaders in this track are accountable for ensuring the successful delivery of team projects and cultivating talent within their teams.",
+  "jobTitle": "Associate Consultant",
+  "jobTitleSummary": "Builds foundational workplace skills by delivering with guidance and mastering technical/functional skills. Creates impact through personal growth, authentic client relationships, and quality deliverables.",
+  "competencyExpectations": {
+    "Deliver Exceptionally": [
+      {
+        "category": "Delivery Management",
+        "expectation": "Follows guidance to meet delivery commitments, soliciting ideas to inform decisions and plans."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Seeks and accepts help when in need of support."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Manages tasks based on given priorities, seeking guidance when faced with conflicting demands."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Maintains a consistent personal velocity."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Reports issues or challenges appropriately to leadership, and learns from them. "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Uses knowledge, guidance, and examples to build solutions.  "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Identifies problems and follows structured approaches to identify options. "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Learns and applies quality standards. "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Explores ways to be more innovative in day-to-day work."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Learns about solution impact and outcomes. "
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Delivers clear written and visual communications."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Can communicate about project scope and impact."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Can articulate own and team roles, responsibilities, and expectations."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Begins building authentic relationships with clients."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Demonstrates professionalism in client-facing situations and adapts to team norms (e.g., in-person, on-camera, etc.)."
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Demonstrates an introductory understanding of the project’s scope, objectives, and deliverables. "
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Articulates the immediate benefits of project tasks and how they contribute to the team’s and client's objectives. "
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Shows curiosity toward the client’s goals and needs and asks questions to understand basic client expectations."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Demonstrates ability to quickly acclimate and start contributing to delivery on a new client project."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Applies critical thinking to evaluate information, challenge assumptions, and make informed decisions."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Leverages emerging technologies (e.g., AI, AI agents) to enhance productivity and delivery outcomes."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Exhibits active listening to understand needs and concerns, and provides support to address them where appropriate."
+      }
+    ],
+    "Grow Expertise": [
+      {
+        "category": "Associated Roles",
+        "expectation": "Explores and develops in Functional/Technical roles."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Brings existing knowledge to the table and takes initiative to explore and learn new skills, tools, and processes."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Learns from mistakes and failures, and applies those learnings to future work. "
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Demonstrates openness to coaching and mentoring."
+      },
+      {
+        "category": "Knowledge Management",
+        "expectation": "Learns about knowledge management practices, reviewing and/or contributing to knowledge management."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Begins exploring emerging technologies (e.g., AI, AI agents) with team guidance and recommended resources."
+      }
+    ],
+    "Grow Slalom": [
+      {
+        "category": "Networking and Brand Stewardship",
+        "expectation": "Builds awareness of Slalom brand, as well as client and networking landscapes. "
+      },
+      {
+        "category": "Culture and Community",
+        "expectation": "Works to understand Slalom culture, core values, strategic initiatives, and client impact.  "
+      },
+      {
+        "category": "Culture and Community",
+        "expectation": "Builds connections across Slalom teams, actively engaging in Slalom events and initiatives (e.g., employee resource groups, hackathons)."
+      },
+      {
+        "category": "Business Strategy and Planning",
+        "expectation": "Works to understand elements of capability (e.g., sub-capabilities, disciplines)."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Follows guidance to maximize staffability (e.g., profile updates, staffing conversations) and engages in meaningful bench activity (e.g., skill development)."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Enters time and expenses accurately and on time; plans and seeks approval for time off. "
+      },
+      {
+        "category": "Business Development and Sales",
+        "expectation": "Learns to listen for client needs."
+      },
+      {
+        "category": "Networking and Brand Stewardship",
+        "expectation": "Listens to others deliver elevator pitches and client stories to build familiarity with value messaging."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Begins to learn about Slalom-wide financial metrics and foundational business operational knowledge."
+      },
+      {
+        "category": "Business Strategy and Planning",
+        "expectation": "Works to understand and start to articulate Slalom business (e.g., capabilities, clients, industries, solutions) and strategy (e.g., how Slalom goes to market, value proposition, strategic priorities and initiatives).  "
+      }
+    ],
+    "Lead": [
+      {
+        "category": "Self-Management",
+        "expectation": "Learns and applies personal energy and attention management practices (e.g., manages time and tasks with guidance, stays organized and meets deadlines)."
+      },
+      {
+        "category": "Self-Management",
+        "expectation": "Takes responsibility for continuous learning and professional growth, seeking guidance.  "
+      },
+      {
+        "category": "Self-Management",
+        "expectation": "Has self-awareness and understanding of own behaviors.  "
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Builds collaborative relationships by trying to understand and appreciate others' perspectives and contributions."
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Identifies conflicts and avoids reactivity, seeking guidance to navigate disagreements with empathy, curiosity, and courage."
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Regularly requests and listens to feedback with an open mind - and works to apply it. "
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Thoughtfully responds to requests for feedback."
+      },
+      {
+        "category": "Change Leadership",
+        "expectation": "Exhibits flexibility when change occurs, seeking support and communicating openly with leaders."
+      },
+      {
+        "category": "Vision and Strategy",
+        "expectation": "Seeks to clearly understand internal team vision and strategy, and how their work supports it.  "
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Supports collaborative efforts when appropriate to help achieve shared outcomes."
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Uses the Situation-Behavior-Impact (SBI) framework to structure their feedback and give timely, specific feedback, both positive and constructive."
+      },
+      {
+        "category": "Change Leadership",
+        "expectation": "Capable of navigating ambiguity with appropriate oversight and direction.  "
+      }
+    ]
+  },
+  "quantitativeExpectations": [
+    "86%+ Utilization (Self)"
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "trackTitle": "Client Delivery",
+  "trackDescription": "Focuses on Slalom’s business by delivering capabilities and offerings to customers, and supports business growth through excellent delivery. Leaders in this track are accountable for ensuring the successful delivery of team projects and cultivating talent within their teams.",
+  "jobTitle": "Senior Consultant",
+  "jobTitleSummary": "Encourages teams to meet delivery commitments by proactively removing obstacles and building authentic relationships. Demonstrates advanced functional/technical expertise through mentorship and innovative solutioning that addresses complex problems.",
+  "competencyExpectations": {
+    "Deliver Exceptionally": [
+      {
+        "category": "Delivery Management",
+        "expectation": "Guides teams and clients to meet and exceed delivery commitments. "
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Independently manages competing priorities, making informed trade-offs to optimize outcomes for clients and teams. "
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Identifies issues and problem solves to maintain velocity."
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Proactively removes obstacles for self, manages escalations appropriately, and co-creates solutions with leadership."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Applies Slalom and industry best practices to quality work products."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Offers solution input and influences work quality and accuracy. "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Synthesizes complex information from multiple sources to develop well-rounded insights and employs advanced problem-solving techniques to address challenges."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Effectively leverages emerging technologies (e.g., AI, AI agents) to enhance productivity and delivery outcomes."
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Considers and develops new, better, or unique methods, bringing creative solutions to meet client needs. "
+      },
+      {
+        "category": "Delivery Quality and Impact",
+        "expectation": "Designs and monitors success measures (qualitative and quantitative)."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Delivers high-quality written and visual communications."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Communicates effectively across varying perspectives, organizing thoughts and articulating alternatives/tradeoffs."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Communicates productively and candidly, showing sensitivity to being inclusive in communications. "
+      },
+      {
+        "category": "Delivery Management",
+        "expectation": "Onboards efficiently to new projects, immediately contributes to delivery and project success, and supports effective onboarding for team members."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Embraces various cultures within the client organization by being flexible and adjusting to varying client settings."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Builds trust with clients by helping them understand Slalom processes and approach."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Seeks and applies information about underlying client needs."
+      },
+      {
+        "category": "Customer Relationship Management",
+        "expectation": "Skillfully resolves client issues promptly and responds non-defensively, escalating when appropriate."
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Discusses how project outcomes align with the client’s broader strategic goals. "
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Highlights tangible results (e.g., cost savings, efficiency improvements) in team or client updates. "
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Confidently speaks about the project’s outcomes and the logic behind them and relevant client stories or use cases. "
+      },
+      {
+        "category": "Value-based Delivery",
+        "expectation": "Proactively seeks opportunities to showcase the successes of colleagues and the project team."
+      },
+      {
+        "category": "Communication and Influence",
+        "expectation": "Applies active listening and thoughtful communication techniques to influence discussions based on audience needs as well as encourage clear decision-making with teams and clients."
+      }
+    ],
+    "Grow Expertise": [
+      {
+        "category": "Associated Roles",
+        "expectation": "Deepens and/or broadens in Functional/Technical roles (e.g., Advanced+ in 1+)."
+      },
+      {
+        "category": "Associated Roles",
+        "expectation": "May explore and develop in Engagement roles (e.g., Delivery Solution Lead, Engagement Lead) and Pursuit roles (e.g., Sales Solution Lead, Pursuit Lead). "
+      },
+      {
+        "category": "Associated Roles",
+        "expectation": "May be a People Leader (e.g., w/ mastery and business need)."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Is recognized in area of expertise and shares knowledge with team members and clients. "
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Seeks opportunities to upskill and stretch beyond comfort zone, optimizing for own learning style. "
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Coaches or mentors others by asking thoughtful questions to encourage critical thinking and a growth mindset."
+      },
+      {
+        "category": "Solution Enablement",
+        "expectation": "May lend expertise to enhance Slalom solutions (e.g., perspectives, offerings, accelerators) for a capability, industry, or customer outcome, if prioritized."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "May lend expertise to develop or deliver learning opportunities for the capability, industry, solution, customer outcome, if prioritized."
+      },
+      {
+        "category": "Learning and Development",
+        "expectation": "Demonstrates curiosity about emerging technologies (e.g., AI, AI agents) by actively seeking guidance from mentors and available resources."
+      },
+      {
+        "category": "Knowledge Management",
+        "expectation": "Captures and leverages Slalom thought leadership, stories, and assets to support knowledge management."
+      },
+      {
+        "category": "Solution Enablement",
+        "expectation": "Builds and actively leverages expertise on client's business and industry to enhance delivery and partnership with clients."
+      }
+    ],
+    "Grow Slalom": [
+      {
+        "category": "Networking and Brand Stewardship",
+        "expectation": "Maintains client relationships and proactively connects with external experts and networks in areas of interest or expertise."
+      },
+      {
+        "category": "Networking and Brand Stewardship",
+        "expectation": "Is a steward of the Slalom brand (e.g., culture, core values, strategic initiatives, solutions, impact, the value Slalom offers to clients), actively promoting it outside the organization. "
+      },
+      {
+        "category": "Culture and Community",
+        "expectation": "Deepens and broadens connections across Slalom, on projects and across capability, geography, outcome andindustry teams.     "
+      },
+      {
+        "category": "Culture and Community",
+        "expectation": "Shapes Slalom culture by demonstrating core values and actively engaging in Slalom events and initiatives (e.g., employee resource groups, hackathons)."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Has a basic understanding of Slalom-wide financial metrics and foundational business operational knowledge."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Proactively maximizes staffability by regularly updating profile, initiating staffing conversations, and engaging in meaningful bench activity (e.g., skill development, solutioning, Learning and Development, pursuits)."
+      },
+      {
+        "category": "Business Operations",
+        "expectation": "Enters time and expenses accurately and on time; plans and seeks approval for time off."
+      },
+      {
+        "category": "Talent Strategy",
+        "expectation": "May support team's people processes (e.g., onboarding, staffing, and performance management)."
+      },
+      {
+        "category": "Business Development and Sales",
+        "expectation": "Continues to identify opportunities in delivery environments, sharing with project / account leads. "
+      },
+      {
+        "category": "Business Development and Sales",
+        "expectation": "Seeks exposure to sales process, proposals, and statements of work (SOW) that set delivery expectations."
+      },
+      {
+        "category": "Networking and Brand Stewardship",
+        "expectation": "Effectively communicates Slalom’s value by delivering a clear elevator pitch and sharing relevant client stories from their capability area."
+      },
+      {
+        "category": "Business Strategy and Planning",
+        "expectation": "Demonstrates deeper understanding of Slalom business (e.g., capabilities, clients, industries, solutions) and strategy (e.g., how Slalom goes to market, value proposition, strategic priorities and initiatives)."
+      }
+    ],
+    "Lead": [
+      {
+        "category": "Self-Management",
+        "expectation": "Balances multiple priorities, proactively solves problems and maintains accountability under pressure. "
+      },
+      {
+        "category": "Self-Management",
+        "expectation": "Identifies and acts on growth opportunities identified via development and career goals, self-reflection, feedback, and performance processes.   "
+      },
+      {
+        "category": "Self-Management",
+        "expectation": "Displays comfort with sharing mistakes and weaknesses."
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Leverages awareness of own and others' emotions to navigate differences successfully, and tailors style to collaborate with others.  "
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Manages and de-escalates conflicts independently, fostering collaboration and coaching others."
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Uses the Situation-Behavior-Impact (SBI) framework to structure their feedback and give timely, specific feedback, both positive and constructive."
+      },
+      {
+        "category": "Change Leadership",
+        "expectation": "Helps peers and teams interpret and stay open to change and new ways of working."
+      },
+      {
+        "category": "Change Leadership",
+        "expectation": "Communicates openly with teams or stakeholders when navigating change."
+      },
+      {
+        "category": "Career Development",
+        "expectation": "Understands team member career aspirations, interests, skills, and skill gaps."
+      },
+      {
+        "category": "Career Development",
+        "expectation": "Actively connects team members to appropriate development experiences and others they can learn from."
+      },
+      {
+        "category": "Performance Management",
+        "expectation": "Ensures directs understand performance expectations, and guides them to understand and action on strengths and opportunities uncovered in performance processes via ongoing feedback and coaching."
+      },
+      {
+        "category": "Performance Management",
+        "expectation": "Proactively identifies early signs of performance gaps and collaborates with leaders and HR to support course correction."
+      },
+      {
+        "category": "Performance Management",
+        "expectation": "Assesses directs' performance against defined expectations and outcomes, actively participating in calibration discussions to ensure fair and objective evaluation and differentiation of top performers. "
+      },
+      {
+        "category": "Vision and Strategy",
+        "expectation": "Ensures work contributes to internal team vision and strategy, while flagging risks and opportunities. "
+      },
+      {
+        "category": "Career Development",
+        "expectation": "Empowers directs to identify and pursue their career aspirations at Slalom by sharing perspective on potential career directions and providing support and resources to enable their career development."
+      },
+      {
+        "category": "Change Leadership",
+        "expectation": "Capable of navigating high levels of ambiguity with appropriate oversight and direction, and moderate functioning independently under low levels of ambiguity."
+      },
+      {
+        "category": "Collaboration",
+        "expectation": "Collaborates where appropriate to deliver outcomes more effectively and efficiently."
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Regularly gives and seeks feedback in a holistic, 360' fashion - and actions on it."
+      },
+      {
+        "category": "Feedback",
+        "expectation": "Receives feedback with an open mind, curiosity, and respect, and follows up as needed to ensure the feedback is actionable."
+      }
+    ]
+  },
+  "quantitativeExpectations": [
+    "86%+ Utilization (Self)"
+  ]
+}
