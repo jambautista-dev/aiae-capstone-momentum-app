@@ -15,7 +15,7 @@ const PILLAR_ICONS: Record<string, typeof Target> = {
 // Shared row rendering (pillar icon + entry text + tags + reflection), used
 // by both the Compose view's inline log preview and the dedicated Log page.
 // Callers are responsible for positioning the date around this row.
-export function EntryRow({ entry, truncate = false }: { entry: WorkJournalEntry; truncate?: boolean }) {
+export function EntryRow({ entry }: { entry: WorkJournalEntry }) {
   const PillarIcon = entry.pillar ? PILLAR_ICONS[entry.pillar] : undefined;
   return (
     <div style={{ display: "flex", gap: "0.85rem", marginBottom: "0.7rem" }}>
@@ -37,17 +37,7 @@ export function EntryRow({ entry, truncate = false }: { entry: WorkJournalEntry;
         {PillarIcon && <PillarIcon size={14} color="#0C62FB" />}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p
-          style={{
-            margin: "0 0 0.25rem 0",
-            lineHeight: 1.1,
-            ...(truncate
-              ? { whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis" }
-              : {}),
-          }}
-        >
-          {entry.entryText}
-        </p>
+        <p style={{ margin: "0 0 0.25rem 0", lineHeight: 1.1 }}>{entry.entryText}</p>
         {entry.tags && (
           <div style={{ display: "flex", gap: "0.3rem", marginBottom: "0.25rem" }}>
             {entry.tags.split(",").map((t) => (

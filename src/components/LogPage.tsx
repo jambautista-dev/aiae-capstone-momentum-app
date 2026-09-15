@@ -89,7 +89,7 @@ export function LogPage({ entries }: { entries: WorkJournalEntry[] }) {
           {g.entries.map((e) => (
             <div key={e.id} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start", marginBottom: "1.1rem" }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <EntryRow entry={e} truncate />
+                <EntryRow entry={e} />
               </div>
               <div
                 style={{
