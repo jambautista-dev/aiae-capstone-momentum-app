@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { Feather, Copy, Check, Loader2, Sparkles, BookOpen, Target, GraduationCap, Users, Compass } from "lucide-react";
+import { Feather, Copy, Check, Loader2, BookOpen } from "lucide-react";
 import { WorkJournalEntryService } from "./services/WorkJournalEntryService";
 import type { WorkJournalEntry } from "./services/WorkJournalEntryModel";
 import { LEVEL_LADDER, nextLevel, pillarSummary } from "./data/levelLadder";
 import { TrendingUp } from "lucide-react";
+import { LogPage } from "./components/LogPage";
+import { todayISO, formatDate, entryOverlapsRange } from "./utils/dates";
+import { QUICK_TAGS, TYPE_HEADLINE, TYPE_BODY, TYPE_SMALL } from "./constants";
 
 // Swap the import above for the generated Dataverse service once connected —
 // see README steps 3-4. No other code here needs to change if field names match.
@@ -14,15 +17,6 @@ const PILLARS = [
   "Grow Slalom",
   "Lead",
 ];
-
-const QUICK_TAGS = ["Client work", "Learning", "Collaboration", "Leadership"];
-
-const PILLAR_ICONS: Record<string, typeof Target> = {
-  "Deliver Exceptionally": Target,
-  "Grow Expertise": GraduationCap,
-  "Grow Slalom": Users,
-  Lead: Compass,
-};
 
 // Slalom brand typography: Lora (approved secondary/supporting typeface) for
 // serif/headline copy, with system serif fallbacks.
@@ -57,35 +51,8 @@ async function callAI(prompt: string, maxTokens = 500): Promise<string> {
     .trim();
 }
 
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function entryDateLabel(e: WorkJournalEntry): string {
-  return e.startDate === e.endDate
-    ? formatDate(e.startDate)
-    : `${formatDate(e.startDate)} – ${formatDate(e.endDate)}`;
-}
-
-// An entry is "in" a query range if the two intervals overlap at all —
-// not just if the entry's start date falls inside it — so a week-long
-// entry that only partially overlaps a selected quarter still counts.
-function entryOverlapsRange(e: WorkJournalEntry, queryStart: string, queryEnd: string): boolean {
-  const startsBeforeQueryEnds = !queryEnd || e.startDate <= queryEnd;
-  const endsAfterQueryStarts = !queryStart || e.endDate >= queryStart;
-  return startsBeforeQueryEnds && endsAfterQueryStarts;
-}
-
 export default function App() {
+  const [view, setView] = useState<"compose" | "log">("compose");
   const [entries, setEntries] = useState<WorkJournalEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [draft, setDraft] = useState("");
@@ -289,8 +256,10 @@ export default function App() {
     }
   };
 
-  // Sorted newest-first by start date. No longer grouped into date buckets —
-  // a range entry (e.g. a whole week) can't cleanly belong to one bucket.
+  // Sorted newest-first by start date, ungrouped — used for the Compose
+  // view's inline preview. The Log page groups by date separately below,
+  // since a range entry (e.g. a whole week) can't cleanly belong to one
+  // bucket, but grouping is still useful for the dedicated Log view.
   const sortedEntries = entries
     .slice()
     .sort((a, b) => (a.startDate < b.startDate ? 1 : -1));
@@ -312,13 +281,43 @@ export default function App() {
       <header style={{ marginBottom: "1.75rem" }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem" }}>
           <Feather size={22} color="#0C62FB" />
-          <h1 style={{ fontSize: "1.7rem", margin: 0, fontWeight: 600, lineHeight: 0.9 }}>Momentum</h1>
+          <h1 style={{ fontSize: TYPE_HEADLINE, margin: 0, fontWeight: 600, lineHeight: 0.9 }}>Momentum</h1>
         </div>
-        <p style={{ fontFamily: SANS_FONT, color: "#666666", marginTop: "0.3rem", fontSize: "0.92rem", lineHeight: 1.1 }}>
+        <p style={{ fontFamily: SANS_FONT, color: "#666666", marginTop: "0.3rem", fontSize: TYPE_SMALL, lineHeight: 1.1 }}>
           A line a day, in case you forget how far you've come.
         </p>
+        <div style={{ display: "flex", gap: "1.1rem", marginTop: "1rem", borderBottom: "1px solid #E6E6E6" }}>
+          {(
+            [
+              ["compose", "Compose"],
+              ["log", "Log"],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setView(key)}
+              style={{
+                fontFamily: SANS_FONT,
+                fontSize: TYPE_SMALL,
+                fontWeight: 600,
+                padding: "0.5rem 0.1rem",
+                border: "none",
+                borderBottom: `2px solid ${view === key ? "#0C62FB" : "transparent"}`,
+                background: "transparent",
+                color: view === key ? "#0C62FB" : "#666666",
+                cursor: "pointer",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </header>
 
+      {view === "log" && <LogPage entries={sortedEntries} />}
+
+      {view === "compose" && (
+      <>
       <section
         style={{
           background: "#E6E6E6",
@@ -329,7 +328,7 @@ export default function App() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.5rem" }}>
-          <div style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.78rem", color: "#666666" }}>
+          <div style={{ fontFamily: "ui-monospace, monospace", fontSize: TYPE_SMALL, color: "#666666" }}>
             {entryIsRange
               ? `${formatDate(entryStartDate)} – ${formatDate(entryEndDate)}`
               : formatDate(todayISO())}
@@ -340,7 +339,7 @@ export default function App() {
               alignItems: "center",
               gap: "0.3rem",
               fontFamily: SANS_FONT,
-              fontSize: "0.75rem",
+              fontSize: TYPE_SMALL,
               color: "#666666",
               cursor: "pointer",
             }}
@@ -354,7 +353,7 @@ export default function App() {
           </label>
         </div>
         {entryIsRange && (
-          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.6rem", fontFamily: SANS_FONT, fontSize: "0.8rem" }}>
+          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.6rem", fontFamily: SANS_FONT, fontSize: TYPE_SMALL }}>
             <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
               From
               <input
@@ -387,7 +386,7 @@ export default function App() {
             background: "transparent",
             outline: "none",
             fontFamily: SERIF_FONT,
-            fontSize: "1rem",
+            fontSize: TYPE_BODY,
             color: "#000000",
             lineHeight: 1.1,
           }}
@@ -401,7 +400,7 @@ export default function App() {
                 onClick={() => toggleTag(tag)}
                 style={{
                   fontFamily: SANS_FONT,
-                  fontSize: "0.78rem",
+                  fontSize: TYPE_SMALL,
                   padding: "0.25rem 0.6rem",
                   borderRadius: "999px",
                   border: `1px solid ${active ? "#0C62FB" : "#E6E6E6"}`,
@@ -423,7 +422,7 @@ export default function App() {
             disabled={!draft.trim() || saving}
             style={{
               fontFamily: SANS_FONT,
-              fontSize: "0.85rem",
+              fontSize: TYPE_SMALL,
               fontWeight: 600,
               padding: "0.45rem 1rem",
               borderRadius: "4px",
@@ -442,66 +441,10 @@ export default function App() {
         </div>
       </section>
 
-      <section style={{ marginBottom: "2.25rem" }}>
-        <h2 style={{ fontFamily: SANS_FONT, fontSize: "0.78rem", color: "#666666", letterSpacing: "0.03em", marginBottom: "0.75rem", lineHeight: 0.9 }}>
-          Your log
-        </h2>
-        {entries.length === 0 && (
-          <p style={{ color: "#666666", fontStyle: "italic", fontSize: "0.92rem" }}>
-            Nothing logged yet — write your first line above.
-          </p>
-        )}
-        {sortedEntries.map((e) => {
-          const PillarIcon = e.pillar ? PILLAR_ICONS[e.pillar] : undefined;
-          return (
-            <div key={e.id} style={{ marginBottom: "1.1rem" }}>
-              <div style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", color: "#666666", marginBottom: "0.35rem" }}>
-                {entryDateLabel(e)}
-              </div>
-              <div style={{ display: "flex", gap: "0.85rem", marginBottom: "0.7rem" }}>
-                <div
-                  style={{
-                    width: "26px",
-                    height: "26px",
-                    borderRadius: "50%",
-                    border: PillarIcon ? "1px solid #0C62FB" : "1px solid transparent",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                  title={e.pillar || undefined}
-                >
-                  {PillarIcon && <PillarIcon size={14} color="#0C62FB" />}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ margin: "0 0 0.25rem 0", lineHeight: 1.1 }}>{e.entryText}</p>
-                  {e.tags && (
-                    <div style={{ display: "flex", gap: "0.3rem", marginBottom: "0.25rem" }}>
-                      {e.tags.split(",").map((t) => (
-                        <span key={t} style={{ fontFamily: SANS_FONT, fontSize: "0.7rem", color: "#0C62FB" }}>
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {e.reflection && (
-                    <p style={{ fontFamily: SANS_FONT, fontSize: "0.82rem", color: "#FF4D5F", margin: 0, display: "flex", alignItems: "flex-start", gap: "0.3rem" }}>
-                      <Sparkles size={13} style={{ marginTop: "0.15rem", flexShrink: 0 }} />
-                      {e.reflection}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </section>
-
       <section style={{ borderTop: "1px solid #E6E6E6", paddingTop: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.75rem" }}>
           <BookOpen size={17} color="#0C62FB" />
-          <h2 style={{ fontFamily: SANS_FONT, fontSize: "0.95rem", margin: 0, lineHeight: 0.9 }}>
+          <h2 style={{ fontFamily: SANS_FONT, fontSize: TYPE_SMALL, margin: 0, lineHeight: 0.9 }}>
             Generate quarterly reflection draft
           </h2>
         </div>
@@ -526,7 +469,7 @@ export default function App() {
               alignItems: "center",
               gap: "0.4rem",
               fontFamily: SANS_FONT,
-              fontSize: "0.85rem",
+              fontSize: TYPE_SMALL,
               cursor: "pointer",
             }}
           >
@@ -539,7 +482,7 @@ export default function App() {
             Promotion Focus Mode
           </label>
           {promotionMode && (
-            <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: SANS_FONT, fontSize: "0.85rem" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: SANS_FONT, fontSize: TYPE_SMALL }}>
               {ENABLE_LEVEL_PICKER ? (
                 <>
                   Current level
@@ -571,7 +514,7 @@ export default function App() {
               disabled={coachingLoading}
               style={{
                 fontFamily: SANS_FONT,
-                fontSize: "0.8rem",
+                fontSize: TYPE_SMALL,
                 fontWeight: 600,
                 padding: "0.35rem 0.75rem",
                 borderRadius: "4px",
@@ -591,21 +534,21 @@ export default function App() {
         </div>
 
         {coachingError && (
-          <p style={{ fontFamily: SANS_FONT, fontSize: "0.85rem", color: "#9A4B3A" }}>{coachingError}</p>
+          <p style={{ fontFamily: SANS_FONT, fontSize: TYPE_SMALL, color: "#9A4B3A" }}>{coachingError}</p>
         )}
         {coaching && (
           <div style={{ background: "#FFDBDF", border: "1px solid #FF4D5F", borderRadius: "4px", padding: "0.85rem 1rem", marginBottom: "1rem" }}>
-            <p style={{ fontFamily: SANS_FONT, fontSize: "0.75rem", color: "#FF4D5F", margin: "0 0 0.4rem 0", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+            <p style={{ fontFamily: SANS_FONT, fontSize: TYPE_SMALL, color: "#FF4D5F", margin: "0 0 0.4rem 0", display: "flex", alignItems: "center", gap: "0.3rem" }}>
               <TrendingUp size={13} />
               Promotion coaching — on demand
             </p>
-            <pre style={{ whiteSpace: "pre-wrap", fontFamily: SERIF_FONT, fontSize: "0.88rem", lineHeight: 1.1, margin: 0 }}>
+            <pre style={{ whiteSpace: "pre-wrap", fontFamily: SERIF_FONT, fontSize: TYPE_BODY, lineHeight: 1.1, margin: 0 }}>
               {coaching}
             </pre>
           </div>
         )}
 
-        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.75rem", fontFamily: SANS_FONT, fontSize: "0.85rem" }}>
+        <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.75rem", fontFamily: SANS_FONT, fontSize: TYPE_SMALL }}>
           <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             From
             <input type="date" value={rangeStart} onChange={(e) => setRangeStart(e.target.value)} style={{ fontFamily: "inherit", padding: "0.25rem", border: "1px solid #E6E6E6", borderRadius: "3px", background: "#E6E6E6" }} />
@@ -617,7 +560,7 @@ export default function App() {
           <button
             onClick={generateReflection}
             disabled={generating}
-            style={{ fontFamily: SANS_FONT, fontSize: "0.85rem", fontWeight: 600, padding: "0.4rem 0.9rem", borderRadius: "4px", border: "none", background: "#FF4D5F", color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem" }}
+            style={{ fontFamily: SANS_FONT, fontSize: TYPE_SMALL, fontWeight: 600, padding: "0.4rem 0.9rem", borderRadius: "4px", border: "none", background: "#FF4D5F", color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.4rem" }}
           >
             {generating && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
             Generate draft
@@ -625,24 +568,26 @@ export default function App() {
         </div>
 
         {reflectionError && (
-          <p style={{ fontFamily: SANS_FONT, fontSize: "0.85rem", color: "#9A4B3A" }}>{reflectionError}</p>
+          <p style={{ fontFamily: SANS_FONT, fontSize: TYPE_SMALL, color: "#9A4B3A" }}>{reflectionError}</p>
         )}
 
         {reflection && (
           <div style={{ background: "#E6E6E6", border: "1px solid #E6E6E6", borderRadius: "4px", padding: "1rem", position: "relative" }}>
             <button
               onClick={copyReflection}
-              style={{ position: "absolute", top: "0.6rem", right: "0.6rem", fontFamily: SANS_FONT, fontSize: "0.75rem", border: "1px solid #E6E6E6", background: "transparent", borderRadius: "3px", padding: "0.25rem 0.5rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem", color: "#666666" }}
+              style={{ position: "absolute", top: "0.6rem", right: "0.6rem", fontFamily: SANS_FONT, fontSize: TYPE_SMALL, border: "1px solid #E6E6E6", background: "transparent", borderRadius: "3px", padding: "0.25rem 0.5rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem", color: "#666666" }}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
               {copied ? "Copied" : "Copy"}
             </button>
-            <pre style={{ whiteSpace: "pre-wrap", fontFamily: SERIF_FONT, fontSize: "0.92rem", lineHeight: 1.1, margin: 0, paddingRight: "3.5rem" }}>
+            <pre style={{ whiteSpace: "pre-wrap", fontFamily: SERIF_FONT, fontSize: TYPE_BODY, lineHeight: 1.1, margin: 0, paddingRight: "3.5rem" }}>
               {reflection}
             </pre>
           </div>
         )}
       </section>
+      </>
+      )}
 
       <style>{`@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }`}</style>
     </div>
