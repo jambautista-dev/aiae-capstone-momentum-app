@@ -9,4 +9,5 @@ export type WorkJournalEntry = {
   entryText: string;
   tags: string; // comma-separated quick-tags
   reflection: string; // AI-generated one-liner, filled after save
+  pillar: string; // AI-classified: one of the 4 Me@Slalom pillars, or "" if not yet classified
 };

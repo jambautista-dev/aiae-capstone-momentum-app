@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Feather, Copy, Check, Loader2, Sparkles, BookOpen } from "lucide-react";
+import { Feather, Copy, Check, Loader2, Sparkles, BookOpen, Target, GraduationCap, Users, Compass } from "lucide-react";
 import { WorkJournalEntryService } from "./services/WorkJournalEntryService";
 import type { WorkJournalEntry } from "./services/WorkJournalEntryModel";
 import { LEVEL_LADDER, nextLevel, pillarSummary } from "./data/levelLadder";
@@ -16,6 +16,13 @@ const PILLARS = [
 ];
 
 const QUICK_TAGS = ["Client work", "Learning", "Collaboration", "Leadership"];
+
+const PILLAR_ICONS: Record<string, typeof Target> = {
+  "Deliver Exceptionally": Target,
+  "Grow Expertise": GraduationCap,
+  "Grow Slalom": Users,
+  Lead: Compass,
+};
 
 // Slalom brand typography: Lora (approved secondary/supporting typeface) for
 // serif/headline copy, with system serif fallbacks.
@@ -254,6 +261,7 @@ export default function App() {
         entryText: draft.trim(),
         tags: activeTags.join(","),
         reflection: "",
+        pillar: "",
       });
       setEntries((prev) => [created, ...prev]);
       setDraft("");
@@ -263,18 +271,24 @@ export default function App() {
       setEntryEndDate(todayISO());
 
       try {
-        const line = await callClaude(
+        const response = await callClaude(
           `A person logged this note about their work${
             created.startDate !== created.endDate ? ` covering ${created.startDate} to ${created.endDate}` : ""
           }: "${created.entryText}"${
             created.tags ? ` (tagged: ${created.tags})` : ""
-          }.\n\nRespond with exactly one short, specific, encouraging sentence naming the skill or professional behavior this entry demonstrates growth in. No preamble, no quotes, just the sentence.`,
-          120
+          }.\n\nRespond with exactly these two labeled lines and nothing else:\nPILLAR: <the single one of these four that this entry most closely represents — ${PILLARS.join(", ")}>\nREFLECTION: <one short, specific, encouraging sentence naming the skill or behavior this entry demonstrates growth in>`,
+          150
         );
+        const pillarMatch = response.match(/PILLAR:\s*(.+)/i);
+        const reflectionMatch = response.match(/REFLECTION:\s*(.+)/i);
+        const parsedPillar = pillarMatch?.[1]?.trim() ?? "";
+        const line = reflectionMatch?.[1]?.trim() ?? "";
+        const pillar =
+          PILLARS.find((p) => p.toLowerCase() === parsedPillar.toLowerCase()) ?? "";
         if (created.id) {
-          await WorkJournalEntryService.update(created.id, { reflection: line });
+          await WorkJournalEntryService.update(created.id, { reflection: line, pillar });
           setEntries((prev) =>
-            prev.map((e) => (e.id === created.id ? { ...e, reflection: line } : e))
+            prev.map((e) => (e.id === created.id ? { ...e, reflection: line, pillar } : e))
           );
         }
       } catch {
@@ -624,31 +638,51 @@ export default function App() {
             Nothing logged yet — write your first line above.
           </p>
         )}
-        {sortedEntries.map((e) => (
-          <div key={e.id} style={{ marginBottom: "1.1rem" }}>
-            <div style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", color: "#666666", marginBottom: "0.35rem" }}>
-              {entryDateLabel(e)}
-            </div>
-            <div style={{ borderLeft: "2px solid #E6E6E6", paddingLeft: "0.85rem", marginBottom: "0.7rem" }}>
-              <p style={{ margin: "0 0 0.25rem 0", lineHeight: 1.1 }}>{e.entryText}</p>
-              {e.tags && (
-                <div style={{ display: "flex", gap: "0.3rem", marginBottom: "0.25rem" }}>
-                  {e.tags.split(",").map((t) => (
-                    <span key={t} style={{ fontFamily: SANS_FONT, fontSize: "0.7rem", color: "#0C62FB" }}>
-                      {t}
-                    </span>
-                  ))}
+        {sortedEntries.map((e) => {
+          const PillarIcon = e.pillar ? PILLAR_ICONS[e.pillar] : undefined;
+          return (
+            <div key={e.id} style={{ marginBottom: "1.1rem" }}>
+              <div style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", color: "#666666", marginBottom: "0.35rem" }}>
+                {entryDateLabel(e)}
+              </div>
+              <div style={{ display: "flex", gap: "0.85rem", marginBottom: "0.7rem" }}>
+                <div
+                  style={{
+                    width: "26px",
+                    height: "26px",
+                    borderRadius: "50%",
+                    border: PillarIcon ? "1px solid #0C62FB" : "1px solid transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                  title={e.pillar || undefined}
+                >
+                  {PillarIcon && <PillarIcon size={14} color="#0C62FB" />}
                 </div>
-              )}
-              {e.reflection && (
-                <p style={{ fontFamily: SANS_FONT, fontSize: "0.82rem", color: "#FF4D5F", margin: 0, display: "flex", alignItems: "flex-start", gap: "0.3rem" }}>
-                  <Sparkles size={13} style={{ marginTop: "0.15rem", flexShrink: 0 }} />
-                  {e.reflection}
-                </p>
-              )}
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: "0 0 0.25rem 0", lineHeight: 1.1 }}>{e.entryText}</p>
+                  {e.tags && (
+                    <div style={{ display: "flex", gap: "0.3rem", marginBottom: "0.25rem" }}>
+                      {e.tags.split(",").map((t) => (
+                        <span key={t} style={{ fontFamily: SANS_FONT, fontSize: "0.7rem", color: "#0C62FB" }}>
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {e.reflection && (
+                    <p style={{ fontFamily: SANS_FONT, fontSize: "0.82rem", color: "#FF4D5F", margin: 0, display: "flex", alignItems: "flex-start", gap: "0.3rem" }}>
+                      <Sparkles size={13} style={{ marginTop: "0.15rem", flexShrink: 0 }} />
+                      {e.reflection}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section style={{ borderTop: "1px solid #E6E6E6", paddingTop: "1.25rem" }}>
