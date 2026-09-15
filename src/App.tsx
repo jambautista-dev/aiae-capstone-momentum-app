@@ -38,18 +38,15 @@ const SANS_FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 // persistPromotion) is already wired up — this only hides the control.
 const ENABLE_LEVEL_PICKER = false;
 
-// NOTE: for a production deployment inside your environment's DLP policy,
-// move this behind a Power Automate flow or Azure OpenAI/AI Builder connector
-// rather than calling a public API directly from the client. See README.
-async function callClaude(prompt: string, maxTokens = 500): Promise<string> {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+// Calls go through the local /api/ai/complete dev proxy (see vite.config.ts),
+// which forwards to Azure OpenAI server-side, so no API key ships to the
+// browser. For a production deployment, swap that proxy for a Power
+// Automate flow or AI Builder connector — see README "AI proxy".
+async function callAI(prompt: string, maxTokens = 500): Promise<string> {
+  const response = await fetch("/api/ai/complete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: maxTokens,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify({ content: prompt, maxTokens }),
   });
   if (!response.ok) throw new Error("AI request failed");
   const data = await response.json();
@@ -58,62 +55,6 @@ async function callClaude(prompt: string, maxTokens = 500): Promise<string> {
     .map((b: { text: string }) => b.text)
     .join("\n")
     .trim();
-}
-
-// Multimodal variant for the entry-assist feature: sends text plus any
-// image/text attachments as content blocks, per Claude's messages API.
-type ContentBlock =
-  | { type: "text"; text: string }
-  | { type: "image"; source: { type: "base64"; media_type: string; data: string } };
-
-async function callClaudeWithContent(blocks: ContentBlock[], maxTokens = 300): Promise<string> {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: maxTokens,
-      messages: [{ role: "user", content: blocks }],
-    }),
-  });
-  if (!response.ok) throw new Error("AI request failed");
-  const data = await response.json();
-  return data.content
-    .filter((b: { type: string }) => b.type === "text")
-    .map((b: { text: string }) => b.text)
-    .join("\n")
-    .trim();
-}
-
-type Attachment = {
-  name: string;
-  kind: "image" | "text";
-  mediaType?: string; // for images
-  data: string; // base64 for images, raw text for text files
-};
-
-const MAX_TEXT_ATTACHMENT_CHARS = 4000; // keep prompts light, per token budget
-
-function readFileAsAttachment(file: File): Promise<Attachment> {
-  return new Promise((resolve, reject) => {
-    const isImage = file.type.startsWith("image/");
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("File read failed"));
-    if (isImage) {
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(",")[1] ?? "";
-        resolve({ name: file.name, kind: "image", mediaType: file.type, data: base64 });
-      };
-      reader.readAsDataURL(file);
-    } else {
-      reader.onload = () => {
-        const text = (reader.result as string).slice(0, MAX_TEXT_ATTACHMENT_CHARS);
-        resolve({ name: file.name, kind: "text", data: text });
-      };
-      reader.readAsText(file);
-    }
-  });
 }
 
 function todayISO(): string {
@@ -148,12 +89,8 @@ export default function App() {
   const [entries, setEntries] = useState<WorkJournalEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [draft, setDraft] = useState("");
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [drafting, setDrafting] = useState(false);
-  const [draftError, setDraftError] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const [hoverDraftBtn, setHoverDraftBtn] = useState(false);
   const [hoverSaveBtn, setHoverSaveBtn] = useState(false);
   const [entryIsRange, setEntryIsRange] = useState(false);
   const [entryStartDate, setEntryStartDate] = useState(todayISO());
@@ -206,49 +143,6 @@ export default function App() {
     );
   };
 
-  const handleFilesSelected = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const read = await Promise.all(Array.from(files).map(readFileAsAttachment));
-    setAttachments((prev) => [...prev, ...read]);
-  };
-
-  const removeAttachment = (index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const draftFromNotes = async () => {
-    if (!draft.trim() && attachments.length === 0) return;
-    setDraftError("");
-    setDrafting(true);
-    try {
-      const blocks: ContentBlock[] = [
-        {
-          type: "text",
-          text: `Turn these quick/messy notes${
-            attachments.length ? " and attached files/screenshots" : ""
-          } into one clean, specific sentence (two at most) describing what the person did at work today, suitable for a daily work log entry. Keep only what's actually stated or shown — don't invent details. No preamble, just the entry text.\n\nNotes: "${draft.trim() || "(none — see attachments)"}"`,
-        },
-      ];
-      for (const a of attachments) {
-        if (a.kind === "image") {
-          blocks.push({
-            type: "image",
-            source: { type: "base64", media_type: a.mediaType || "image/png", data: a.data },
-          });
-        } else {
-          blocks.push({ type: "text", text: `--- ${a.name} ---\n${a.data}` });
-        }
-      }
-      const cleaned = await callClaudeWithContent(blocks, 200);
-      setDraft(cleaned);
-      setAttachments([]); // attachments are transient — used once to help draft, not persisted
-    } catch {
-      setDraftError("Couldn't draft an entry from that. You can still write it yourself.");
-    } finally {
-      setDrafting(false);
-    }
-  };
-
   const saveEntry = async () => {
     if (!draft.trim()) return;
     setSaving(true);
@@ -271,7 +165,7 @@ export default function App() {
       setEntryEndDate(todayISO());
 
       try {
-        const response = await callClaude(
+        const response = await callAI(
           `A person logged this note about their work${
             created.startDate !== created.endDate ? ` covering ${created.startDate} to ${created.endDate}` : ""
           }: "${created.entryText}"${
@@ -340,7 +234,7 @@ export default function App() {
       const prompt = `Here are a person's daily work log entries from ${
         rangeStart || "the start"
       } to ${rangeEnd}:\n\n${entryList}\n\nDraft a quarterly self-reflection organized under these pillars: ${PILLARS.join(", ")}. For each pillar, write 1-3 bullet points using an Action → Impact → Growth structure, grounded ONLY in specifics actually present in the entries above — do not invent details, metrics, or outcomes that aren't there. If a pillar has no supporting entries, write a single line noting that briefly instead of forcing content. Keep the tone professional and concise. Output plain text with a heading per pillar, no markdown asterisks.${promotionSection}`;
-      const text = await callClaude(prompt, promotionMode ? 1400 : 900);
+      const text = await callAI(prompt, promotionMode ? 1400 : 900);
       setReflection(text);
     } catch {
       setReflectionError("Something went wrong generating the draft. Try again.");
@@ -375,7 +269,7 @@ export default function App() {
         )
         .join("\n");
       const prompt = `Here are a person's daily work log entries so far:\n\n${entryList}\n\nThe person is a ${currentLevel} aiming for ${next.jobTitle}. Give a short, direct coaching note (not a full reflection) with two parts:\n1. "Already showing up at ${next.jobTitle}": 1-2 sentences citing specific entries that match the standard, or say there's no clear evidence yet.\n2. "Strongest next move": one concrete, specific action grounded in a gap you can see in the standards below versus what's logged — not generic career advice.\nBase this ONLY on the pillars with the clearest signal in the entries; you don't need to cover all four. Ground everything strictly in the entries — do not invent accomplishments.\n\n${next.jobTitle} standards by pillar:\n${PILLARS.map((p) => `\n${p}:\n${pillarSummary(next, p)}`).join("\n")}`;
-      const text = await callClaude(prompt, 400);
+      const text = await callAI(prompt, 400);
       setCoaching(text);
     } catch {
       setCoachingError("Something went wrong getting coaching. Try again.");
@@ -484,11 +378,7 @@ export default function App() {
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder={
-            entryIsRange
-              ? "What did you do over this period?"
-              : "What did you do today? (paste rough notes — AI can clean it up)"
-          }
+          placeholder={entryIsRange ? "What did you do over this period?" : "What did you do today?"}
           rows={2}
           style={{
             width: "100%",
@@ -502,38 +392,6 @@ export default function App() {
             lineHeight: 1.1,
           }}
         />
-        {attachments.length > 0 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.4rem" }}>
-            {attachments.map((a, i) => (
-              <span
-                key={`${a.name}-${i}`}
-                style={{
-                  fontFamily: SANS_FONT,
-                  fontSize: "0.72rem",
-                  color: "#666666",
-                  border: "1px solid #E6E6E6",
-                  borderRadius: "999px",
-                  padding: "0.15rem 0.5rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.3rem",
-                }}
-              >
-                {a.name}
-                <button
-                  onClick={() => removeAttachment(i)}
-                  style={{ border: "none", background: "none", cursor: "pointer", color: "#9A4B3A", padding: 0, fontSize: "0.8rem", lineHeight: 1 }}
-                  aria-label={`Remove ${a.name}`}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-        {draftError && (
-          <p style={{ fontFamily: SANS_FONT, fontSize: "0.78rem", color: "#9A4B3A", margin: "0.4rem 0 0" }}>{draftError}</p>
-        )}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginTop: "0.5rem", marginBottom: "0.75rem" }}>
           {QUICK_TAGS.map((tag) => {
             const active = activeTags.includes(tag);
@@ -557,75 +415,30 @@ export default function App() {
             );
           })}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <label
-              style={{
-                fontFamily: SANS_FONT,
-                fontSize: "0.78rem",
-                color: "#666666",
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
-            >
-              Attach screenshot / file
-              <input
-                type="file"
-                accept="image/*,.txt,.md,.csv,.json"
-                multiple
-                onChange={(e) => handleFilesSelected(e.target.files)}
-                style={{ display: "none" }}
-              />
-            </label>
-          </div>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <button
-              onClick={draftFromNotes}
-              onMouseEnter={() => setHoverDraftBtn(true)}
-              onMouseLeave={() => setHoverDraftBtn(false)}
-              disabled={(!draft.trim() && attachments.length === 0) || drafting}
-              style={{
-                fontFamily: SANS_FONT,
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                padding: "0.45rem 0.9rem",
-                borderRadius: "4px",
-                border: `1px solid ${hoverDraftBtn ? "#002FAF" : "#0C62FB"}`,
-                background: "transparent",
-                color: hoverDraftBtn ? "#002FAF" : "#0C62FB",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-              }}
-            >
-              {drafting && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-              Draft with AI
-            </button>
-            <button
-              onClick={saveEntry}
-              onMouseEnter={() => setHoverSaveBtn(true)}
-              onMouseLeave={() => setHoverSaveBtn(false)}
-              disabled={!draft.trim() || saving}
-              style={{
-                fontFamily: SANS_FONT,
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                padding: "0.45rem 1rem",
-                borderRadius: "4px",
-                border: "none",
-                background: draft.trim() ? (hoverSaveBtn ? "#002FAF" : "#0C62FB") : "#E6E6E6",
-                color: "#FFFFFF",
-                cursor: draft.trim() ? "pointer" : "default",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-              }}
-            >
-              {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-              Save entry
-            </button>
-          </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+          <button
+            onClick={saveEntry}
+            onMouseEnter={() => setHoverSaveBtn(true)}
+            onMouseLeave={() => setHoverSaveBtn(false)}
+            disabled={!draft.trim() || saving}
+            style={{
+              fontFamily: SANS_FONT,
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              padding: "0.45rem 1rem",
+              borderRadius: "4px",
+              border: "none",
+              background: draft.trim() ? (hoverSaveBtn ? "#002FAF" : "#0C62FB") : "#E6E6E6",
+              color: "#FFFFFF",
+              cursor: draft.trim() ? "pointer" : "default",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem",
+            }}
+          >
+            {saving && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+            Save entry
+          </button>
         </div>
       </section>
 
